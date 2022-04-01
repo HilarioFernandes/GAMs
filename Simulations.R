@@ -68,6 +68,9 @@ set.seed(211926)
   lines(Data4$X, Data4$Ysmoo, col = 'red', lwd = 2)
   lines(Data2$X, Data2$Ysmoo, col = 'green', lwd = 2)
   
+  grid(col = "lightgray", lty = "dotted",
+       lwd = par("lwd"), equilogs = TRUE)
+  
   legend("topright", legend = c("w_opt","w < w_opt", "w > w_opt"),
          col = c("green", "blue", "red"), pch = c(16,16,16),
          pt.cex = 1, 
