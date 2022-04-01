@@ -9,7 +9,7 @@ neighbourhoods <- function(m, w){
 }
 
 #This function calculates a smoother
-#type can assume the values 'medmov' (for moving averages) or 'runlin' (for running lines)
+#type can assume the values 'movavg' (for moving averages) or 'runlin' (for running lines)
 smoother <- function(data, w, type, print_or_not){
   
   data2 <- as.data.frame(data)
@@ -26,7 +26,7 @@ smoother <- function(data, w, type, print_or_not){
   
   
   
-  if (type == 'medmov'){
+  if (type == 'movavg'){
     
     data2$Ysmoo <- 0
     
@@ -149,20 +149,20 @@ w_search <- function(data, tolerance){
 #The output of this function will be used to generate a true function s.
 Gen_Data <- function(m, xlim){
   
-  Dados <- matrix(runif(2*m, min = xlim[1], max = xlim[2]), ncol = 2)
-  Dados[1,1] <- 0
-  Dados[2,1] <- 1
+  Data <- matrix(runif(2*m, min = xlim[1], max = xlim[2]), ncol = 2)
+  Data[1,1] <- 0
+  Data[2,1] <- 1
   
-  Dados <- as.data.frame(Dados)
-  Dados <- Dados[order(Dados$V1),]
+  Data <- as.data.frame(Data)
+  Data <- Data[order(Data$V1),]
   
 }
 
 #This function adjusts the smoother using the iterative process described in the paper
 #-init_guess is a vector with starting guesses for eta values
-#-amostra is a data.frame with the observations X and Y
+#-sample is a data.frame with the observations X and Y
 #-epsilon is the desired precision (sup norm of the difference between two consecutive iterations)
-Fitting <- function(init_guess,amostra, epsilon){
+Fitting <- function(init_guess, sample, epsilon){
   
   eta <- init_guess
   eta_hist <- eta
@@ -171,12 +171,12 @@ Fitting <- function(init_guess,amostra, epsilon){
   while (delta > epsilon){
     
     probs <- t(inv.logit(t(eta)))
-    adj_Y <- eta + (amostra$Y - probs)/(probs*(1-probs))
+    adj_Y <- eta + (sample$Y - probs)/(probs*(1-probs))
     
     
     #escolhemos o w por validação cruzada
     
-    data <- as.data.frame(cbind(amostra$X, adj_Y))
+    data <- as.data.frame(cbind(sample$X, adj_Y))
     colnames(data) <- c("X","Y")
     
     w <- w_search(data,20)[[1]]

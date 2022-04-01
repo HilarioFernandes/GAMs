@@ -32,18 +32,18 @@ set.seed(211926)
   
   Y <- true_s(X)
   
-  amostra <- as.data.frame(cbind(X, Y + epsilon))
-  amostra <- amostra[order(amostra$X),]
-  colnames(amostra) <- c("X","Y")
+  sample <- as.data.frame(cbind(X, Y + epsilon))
+  sample <- sample[order(sample$X),]
+  colnames(sample) <- c("X","Y")
 
-  plot(amostra$X, amostra$Y, pch = 16, col = 'grey', xlab = "X", ylab = "Y")
+  plot(sample$X, sample$Y, pch = 16, col = 'grey', xlab = "X", ylab = "Y")
   curve(true_s, col = 'grey', lwd = 2, add = TRUE)
 }
 
 #Plot with CVSS and w
 {
   
-  w <- w_search(amostra,100)
+  w <- w_search(sample,100)
   
   plot(seq(from = 4, to = 2*(n-1), by = 2)/(n-1), w[[2]], pch = 16, cex = 0.8,
        xlab = "w", ylab = "CVSS(w)")
@@ -53,20 +53,20 @@ set.seed(211926)
 {
   
   #optimal w
-  Dados2 <- smoother(amostra, w[[1]], 'runlin', TRUE)
+  Data2 <- smoother(sample, w[[1]], 'runlin', TRUE)
   
   #w lesser than the optimal value
-  Dados3 <- smoother(amostra, ((w[[1]]*(n-1) + 4)/2)/(n-1), 'runlin', TRUE)
+  Data3 <- smoother(sample, ((w[[1]]*(n-1) + 4)/2)/(n-1), 'runlin', TRUE)
   
   #w greater than the optimal value
-  Dados4 <- smoother(amostra, ((w[[1]]*(n-1) + 2*(n-1))/2)/(n-1), 'runlin', TRUE)
+  Data4 <- smoother(sample, ((w[[1]]*(n-1) + 2*(n-1))/2)/(n-1), 'runlin', TRUE)
   
-  plot(amostra$X, amostra$Y, pch = 16, col = 'grey', xlab = "X", ylab = "Y")
+  plot(sample$X, sample$Y, pch = 16, col = 'grey', xlab = "X", ylab = "Y")
   curve(true_s, col = 'grey', lwd = 2, add = TRUE)
   
-  lines(Dados3$X, Dados3$Ysmoo, col = 'blue', lwd = 2)
-  lines(Dados4$X, Dados4$Ysmoo, col = 'red', lwd = 2)
-  lines(Dados2$X, Dados2$Ysmoo, col = 'green', lwd = 2)
+  lines(Data3$X, Data3$Ysmoo, col = 'blue', lwd = 2)
+  lines(Data4$X, Data4$Ysmoo, col = 'red', lwd = 2)
+  lines(Data2$X, Data2$Ysmoo, col = 'green', lwd = 2)
   
   legend("topright", legend = c("w_opt","w < w_opt", "w > w_opt"),
          col = c("green", "blue", "red"), pch = c(16,16,16),
@@ -101,32 +101,32 @@ set.seed(211927)
   
   Y <- true_s(X)
   
-  amostra <- as.data.frame(cbind(X, Y + epsilon))
-  amostra <- amostra[order(amostra$X),]
-  colnames(amostra) <- c("X","Y")
+  sample <- as.data.frame(cbind(X, Y + epsilon))
+  sample <- sample[order(sample$X),]
+  colnames(sample) <- c("X","Y")
   
-  plot(amostra$X, amostra$Y, pch = 16, col = 'grey', xlab = "X", ylab = "Y")
+  plot(sample$X, sample$Y, pch = 16, col = 'grey', xlab = "X", ylab = "Y")
   curve(true_s, col = 'grey', lwd = 2, add = TRUE)
   
   
   
-  w <- w_search(amostra,20)[[1]]
+  w <- w_search(sample,20)[[1]]
   
   
   #optimal w
-  Dados2 <- smoother(amostra, w, 'runlin', FALSE)
+  Data2 <- smoother(sample, w, 'runlin', FALSE)
   
   #w lesser than the optimal value
-  Dados3 <- smoother(amostra, ((w*(n-1) + 4)/2)/(n-1), 'runlin', FALSE)
+  Data3 <- smoother(sample, ((w*(n-1) + 4)/2)/(n-1), 'runlin', FALSE)
   
   #w greater than the optimal value
-  Dados4 <- smoother(amostra, ((w*(n-1) + 2*n)/2)/(n-1), 'runlin', FALSE)
+  Data4 <- smoother(sample, ((w*(n-1) + 2*n)/2)/(n-1), 'runlin', FALSE)
   
   
   
-  lines(Dados3$X, Dados3$Ysmoo, col = 'blue', lwd = 2)
-  lines(Dados4$X, Dados4$Ysmoo, col = 'red', lwd = 2)
-  lines(Dados2$X, Dados2$Ysmoo, col = 'green', lwd = 2)
+  lines(Data3$X, Data3$Ysmoo, col = 'blue', lwd = 2)
+  lines(Data4$X, Data4$Ysmoo, col = 'red', lwd = 2)
+  lines(Data2$X, Data2$Ysmoo, col = 'green', lwd = 2)
   
   legend("topright", legend = c("w_opt","w < w_opt", "w > w_opt"),
          col = c("green", "blue", "red"), pch = c(16,16,16),
@@ -153,11 +153,11 @@ N <- 3
 
 #we generate the set of points which will determine s
 #This set indicates the true probabilities associated with some x values.
-Dados <- Gen_Data(m, c(0,1))
+Data <- Gen_Data(m, c(0,1))
 
 #Now we calculate the true eta values and the corresponding piecewise linear function
-Dados$V3 <- logit(Dados$V2)
-true_s <- approxfun(Dados$V1, Dados$V3)
+Data$V3 <- logit(Data$V2)
+true_s <- approxfun(Data$V1, Data$V3)
 
 #Now we calculate the function associated with the true probabilities (while not a piecewise linear
 #function, it is useful for visualization purposes)
@@ -178,18 +178,18 @@ curve(true_prob, from=0, to=1, xlab="X", ylab="p(X)", ylim = c(0,1), col = 'grey
   
   Y <- rbinom(n,size = N,prob = pX)/N
   
-  amostra <- as.data.frame(cbind(X,Y))
-  amostra <- amostra[order(amostra$X),]
+  sample <- as.data.frame(cbind(X,Y))
+  sample <- sample[order(sample$X),]
   
   #initial guesses for eta
   init_guess <- as.data.frame(rep(0,n))
   
-  eta <- Fitting(init_guess,amostra, 0.01)
+  eta <- Fitting(init_guess,sample, 0.01)
   
-  est_prob <- approxfun(amostra$X, inv.logit(eta))
+  est_prob <- approxfun(sample$X, inv.logit(eta))
   
   curve(true_prob, from=0, to=1, xlab="X", ylab="p(X)", ylim = c(0,1), col = 'grey', lwd = 2)
-  points(amostra$X, amostra$Y, pch = 16, col = 'grey') 
+  points(sample$X, sample$Y, pch = 16, col = 'grey') 
   curve(est_prob, from=0, to=1, ylim = c(0,1), col = 'green', add = TRUE, lwd = 2)
 }
 
@@ -206,11 +206,11 @@ set.seed(211926)
   
   #we generate the set of points which will determine s
   #This set indicates the true probabilities associated with some x values.
-  Dados <- Gen_Data(m, c(0,1))
+  Data <- Gen_Data(m, c(0,1))
   
   #Now we calculate the true eta values and the corresponding piecewise linear function
-  Dados$V3 <- logit(Dados$V2)
-  true_s <- approxfun(Dados$V1, Dados$V3)
+  Data$V3 <- logit(Data$V2)
+  true_s <- approxfun(Data$V1, Data$V3)
   
   #Now we calculate the function associated with the true probabilities
   true_prob <- function(x){inv.logit(true_s(x))}
@@ -233,18 +233,18 @@ set.seed(211926)
   
   Y <- apply(cbind(N(X),pX),FUN= rbinom_sizes, MARGIN = 1)
   
-  amostra <- as.data.frame(cbind(X,Y))
-  amostra <- amostra[order(amostra$X),]
+  sample <- as.data.frame(cbind(X,Y))
+  sample <- sample[order(sample$X),]
   
   #initial guesses for eta
   init_guess <- as.data.frame(rep(0,n))
   
-  eta <- Fitting(init_guess,amostra, 0.01)
+  eta <- Fitting(init_guess,sample, 0.01)
   
-  est_prob <- approxfun(amostra$X, inv.logit(eta))
+  est_prob <- approxfun(sample$X, inv.logit(eta))
   
   curve(true_prob, from=0, to=1, xlab="X", ylab="p(X)", ylim = c(0,1), col = 'grey', lwd = 2)
-  points(amostra$X, amostra$Y, pch = 16, col = 'grey') 
+  points(sample$X, sample$Y, pch = 16, col = 'grey') 
   curve(est_prob, from=0, to=1, ylim = c(0,1), col = 'green', add = TRUE, lwd = 2)
 }
 
